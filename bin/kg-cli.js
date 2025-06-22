@@ -24,12 +24,14 @@ program
   .description('设置知识库')
   .option('-c, --config <path>', '配置文件路径')
   .option('-t, --target-dir <path>', '软链接目标目录（默认为当前目录）')
+  .option('--no-gitignore', '跳过添加到 .gitignore 文件')
   .action(async (name, options) => {
     const cli = new KnowledgeBaseCLI();
 
     try {
       // 确定目标目录
       const targetDir = options.targetDir || process.cwd();
+      const skipGitignore = options.gitignore === false;
 
       if (options.config) {
         // 从配置文件加载
@@ -39,10 +41,14 @@ program
             name,
             configs[name],
             targetDir,
+            skipGitignore,
           );
           if (success) {
             console.log(chalk.green(`✅ 知识库 ${name} 设置完成`));
             console.log(chalk.blue(`📁 软链接已创建在: ${targetDir}`));
+            if (!skipGitignore) {
+              console.log(chalk.blue(`📝 已自动添加到 .gitignore`));
+            }
           } else {
             console.log(chalk.red(`❌ 知识库 ${name} 设置失败`));
           }
@@ -81,10 +87,14 @@ program
             name,
             exampleConfig[name],
             targetDir,
+            skipGitignore,
           );
           if (success) {
             console.log(chalk.green(`✅ 知识库 ${name} 设置完成`));
             console.log(chalk.blue(`📁 软链接已创建在: ${targetDir}`));
+            if (!skipGitignore) {
+              console.log(chalk.blue(`📝 已自动添加到 .gitignore`));
+            }
           } else {
             console.log(chalk.red(`❌ 知识库 ${name} 设置失败`));
           }
@@ -150,11 +160,13 @@ program
   .command('link <name>')
   .description('在当前目录创建知识库软链接')
   .option('-t, --target-dir <path>', '软链接目标目录（默认为当前目录）')
+  .option('--no-gitignore', '跳过添加到 .gitignore 文件')
   .action(async (name, options) => {
     const cli = new KnowledgeBaseCLI();
 
     try {
       const targetDir = options.targetDir || process.cwd();
+      const skipGitignore = options.gitignore === false;
 
       // 检查知识库是否已配置
       if (!cli.config[name]) {
@@ -169,10 +181,19 @@ program
         return;
       }
 
-      const success = await cli.createLink(name, repoPath, null, targetDir);
+      const success = await cli.createLink(
+        name,
+        repoPath,
+        null,
+        targetDir,
+        skipGitignore,
+      );
       if (success) {
         console.log(chalk.green(`✅ 知识库软链接创建成功`));
         console.log(chalk.blue(`📁 软链接位置: ${path.join(targetDir, name)}`));
+        if (!skipGitignore) {
+          console.log(chalk.blue(`📝 已自动添加到 .gitignore`));
+        }
       } else {
         console.log(chalk.red(`❌ 软链接创建失败`));
       }
@@ -189,8 +210,10 @@ if (!process.argv.slice(2).length) {
   console.log(
     '  kg-cli setup python_docs --config config.json --target-dir ./docs',
   );
+  console.log('  kg-cli setup python_docs --config config.json --no-gitignore');
   console.log('  kg-cli link python_docs');
   console.log('  kg-cli link python_docs --target-dir ./docs');
+  console.log('  kg-cli link python_docs --no-gitignore');
   console.log('  kg-cli update python_docs');
   console.log('  kg-cli list');
   console.log('  kg-cli remove python_docs');

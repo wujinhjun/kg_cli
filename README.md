@@ -11,6 +11,7 @@
 - 🖥️ **跨平台支持**: 兼容 macOS、Windows 和 Linux
 - 📝 **配置管理**: 支持 JSON 配置文件管理多个知识库
 - 🌍 **全局安装**: 一次安装，全局使用
+- 📋 **Git集成**: 自动将软链接添加到 `.gitignore` 文件，避免被Git检测
 
 ## 安装要求
 
@@ -44,17 +45,23 @@ pnpm link --global
 ### 基本命令
 
 ```bash
-# 设置知识库（软链接创建在当前目录）
+# 设置知识库（软链接创建在当前目录，自动添加到.gitignore）
 kg-cli setup <知识库名称> --config config.json
 
 # 设置知识库并指定软链接目录
 kg-cli setup <知识库名称> --config config.json --target-dir ./docs
 
-# 在当前目录创建知识库软链接
+# 设置知识库但不添加到.gitignore
+kg-cli setup <知识库名称> --config config.json --no-gitignore
+
+# 在当前目录创建知识库软链接（自动添加到.gitignore）
 kg-cli link <知识库名称>
 
 # 在指定目录创建知识库软链接
 kg-cli link <知识库名称> --target-dir ./docs
+
+# 创建软链接但不添加到.gitignore
+kg-cli link <知识库名称> --no-gitignore
 
 # 更新知识库
 kg-cli update <知识库名称>
@@ -96,11 +103,14 @@ kg-cli --help
 1. **设置 Python 文档知识库**:
 
    ```bash
-   # 在当前目录创建软链接
+   # 在当前目录创建软链接并自动添加到.gitignore
    kg-cli setup python_docs --config config.json
    
    # 在指定目录创建软链接
    kg-cli setup python_docs --config config.json --target-dir ./docs
+   
+   # 创建软链接但不添加到.gitignore
+   kg-cli setup python_docs --config config.json --no-gitignore
    ```
 
 2. **在项目目录中创建知识库软链接**:
@@ -109,11 +119,17 @@ kg-cli --help
    # 进入你的项目目录
    cd /path/to/your/prm-be-project
    
-   # 创建Python文档软链接
+   # 创建Python文档软链接（自动添加到.gitignore）
    kg-cli link python_docs
    
    # 现在你可以在项目目录中访问Python文档了
    ls python_docs/
+   
+   # 检查.gitignore文件
+   cat .gitignore
+   # 会看到类似这样的内容：
+   # # KG-CLI 知识库软链接
+   # python_docs/
    ```
 
 3. **更新知识库**:
@@ -216,81 +232,4 @@ kg-cli --help
 
 ### 本地开发
 
-```bash
-# 克隆仓库
-git clone <repository-url>
-cd kg-cli/kg_npm_cli
-
-# 安装依赖
-pnpm install
-
-# 链接到全局
-pnpm link --global
-
-# 运行测试
-pnpm test
-
-# 开发模式
-pnpm dev
 ```
-
-### 项目结构
-
-```
-kg_npm_cli/
-├── bin/
-│   └── kg-cli.js        # 命令行入口
-├── lib/
-│   └── cli.js           # 核心CLI类
-├── package.json         # pnpm配置
-├── config.json          # 示例配置
-├── publish.sh           # 发布脚本 (Unix)
-├── publish.bat          # 发布脚本 (Windows)
-└── README.md            # 文档
-```
-
-## 发布到pnpm
-
-```bash
-# 登录到pnpm
-pnpm login
-
-# 发布包
-pnpm publish
-
-# 或者发布到测试版本
-pnpm publish --tag beta
-
-# 使用发布脚本
-./publish.sh  # Unix
-publish.bat   # Windows
-```
-
-## 可用的脚本命令
-
-```bash
-# 开发
-pnpm dev              # 开发模式（自动重启）
-pnpm start            # 运行CLI
-
-# 安装
-pnpm install:global   # 全局安装
-pnpm uninstall:global # 全局卸载
-pnpm link             # 链接到全局
-pnpm unlink           # 取消链接
-
-# 发布
-pnpm publish          # 发布当前版本
-pnpm publish:patch    # 发布补丁版本
-pnpm publish:minor    # 发布次要版本
-pnpm publish:major    # 发布主要版本
-pnpm pack             # 创建包文件
-
-# 构建
-pnpm build            # 构建（无操作）
-pnpm test             # 运行测试
-```
-
-## 许可证
-
-MIT License
