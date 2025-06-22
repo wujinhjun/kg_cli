@@ -44,8 +44,17 @@ pnpm link --global
 ### 基本命令
 
 ```bash
-# 设置知识库
+# 设置知识库（软链接创建在当前目录）
 kg-cli setup <知识库名称> --config config.json
+
+# 设置知识库并指定软链接目录
+kg-cli setup <知识库名称> --config config.json --target-dir ./docs
+
+# 在当前目录创建知识库软链接
+kg-cli link <知识库名称>
+
+# 在指定目录创建知识库软链接
+kg-cli link <知识库名称> --target-dir ./docs
 
 # 更新知识库
 kg-cli update <知识库名称>
@@ -87,22 +96,39 @@ kg-cli --help
 1. **设置 Python 文档知识库**:
 
    ```bash
+   # 在当前目录创建软链接
    kg-cli setup python_docs --config config.json
+   
+   # 在指定目录创建软链接
+   kg-cli setup python_docs --config config.json --target-dir ./docs
    ```
 
-2. **更新知识库**:
+2. **在项目目录中创建知识库软链接**:
+
+   ```bash
+   # 进入你的项目目录
+   cd /path/to/your/prm-be-project
+   
+   # 创建Python文档软链接
+   kg-cli link python_docs
+   
+   # 现在你可以在项目目录中访问Python文档了
+   ls python_docs/
+   ```
+
+3. **更新知识库**:
 
    ```bash
    kg-cli update python_docs
    ```
 
-3. **查看已安装的知识库**:
+4. **查看已安装的知识库**:
 
    ```bash
    kg-cli list
    ```
 
-4. **移除知识库**:
+5. **移除知识库**:
 
    ```bash
    kg-cli remove python_docs
@@ -111,8 +137,8 @@ kg-cli --help
 ## 工作流程
 
 1. **检测阶段**: 工具会按顺序检查 `local_paths` 中定义的路径，确认是否为Git仓库
-2. **克隆阶段**: 如果本地不存在，从 `repo_url` 克隆Git仓库
-3. **链接阶段**: 在 `~/.kg-cli/links/` 目录创建软链接
+2. **克隆阶段**: 如果本地不存在，从 `repo_url` 克隆Git仓库到 `~/.kg-cli/repos/` 目录
+3. **链接阶段**: 在指定目录（默认为当前工作目录）创建软链接指向知识库
 
 ## 目录结构
 
@@ -121,10 +147,22 @@ kg-cli --help
 ```
 ~/.kg-cli/
 ├── config.json          # 配置文件
-├── repos/              # Git仓库目录
-│   └── python_docs/    # 克隆的Git仓库
-└── links/              # 软链接目录
-    └── python_docs -> ../repos/python_docs
+└── repos/              # Git仓库目录
+    └── python_docs/    # 克隆的Git仓库
+```
+
+软链接会创建在：
+
+- 当前工作目录（默认）
+- 或用户指定的目录（使用 `--target-dir` 选项）
+
+例如，在项目目录中：
+
+```
+/your/project/
+├── python_docs -> ~/.kg-cli/repos/python_docs  # 软链接
+├── nodejs_docs -> ~/.kg-cli/repos/nodejs_docs  # 软链接
+└── ... 其他项目文件
 ```
 
 ## 平台兼容性

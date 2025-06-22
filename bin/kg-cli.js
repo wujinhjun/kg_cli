@@ -23,17 +23,26 @@ program
   .command('setup <name>')
   .description('设置知识库')
   .option('-c, --config <path>', '配置文件路径')
+  .option('-t, --target-dir <path>', '软链接目标目录（默认为当前目录）')
   .action(async (name, options) => {
     const cli = new KnowledgeBaseCLI();
 
     try {
+      // 确定目标目录
+      const targetDir = options.targetDir || process.cwd();
+
       if (options.config) {
         // 从配置文件加载
         const configs = await fs.readJson(options.config);
         if (configs[name]) {
-          const success = await cli.setupKnowledgeBase(name, configs[name]);
+          const success = await cli.setupKnowledgeBase(
+            name,
+            configs[name],
+            targetDir,
+          );
           if (success) {
             console.log(chalk.green(`✅ 知识库 ${name} 设置完成`));
+            console.log(chalk.blue(`📁 软链接已创建在: ${targetDir}`));
           } else {
             console.log(chalk.red(`❌ 知识库 ${name} 设置失败`));
           }
@@ -71,9 +80,11 @@ program
           const success = await cli.setupKnowledgeBase(
             name,
             exampleConfig[name],
+            targetDir,
           );
           if (success) {
             console.log(chalk.green(`✅ 知识库 ${name} 设置完成`));
+            console.log(chalk.blue(`📁 软链接已创建在: ${targetDir}`));
           } else {
             console.log(chalk.red(`❌ 知识库 ${name} 设置失败`));
           }
@@ -134,11 +145,52 @@ program
     }
   });
 
+// link 命令 - 在当前目录创建知识库软链接
+program
+  .command('link <name>')
+  .description('在当前目录创建知识库软链接')
+  .option('-t, --target-dir <path>', '软链接目标目录（默认为当前目录）')
+  .action(async (name, options) => {
+    const cli = new KnowledgeBaseCLI();
+
+    try {
+      const targetDir = options.targetDir || process.cwd();
+
+      // 检查知识库是否已配置
+      if (!cli.config[name]) {
+        console.log(chalk.red(`❌ 知识库不存在: ${name}`));
+        console.log(chalk.yellow('💡 请先使用 setup 命令设置知识库'));
+        return;
+      }
+
+      const repoPath = cli.config[name].path;
+      if (!fs.existsSync(repoPath)) {
+        console.log(chalk.red(`❌ 知识库路径不存在: ${repoPath}`));
+        return;
+      }
+
+      const success = await cli.createLink(name, repoPath, null, targetDir);
+      if (success) {
+        console.log(chalk.green(`✅ 知识库软链接创建成功`));
+        console.log(chalk.blue(`📁 软链接位置: ${path.join(targetDir, name)}`));
+      } else {
+        console.log(chalk.red(`❌ 软链接创建失败`));
+      }
+    } catch (error) {
+      console.log(chalk.red(`❌ 操作失败: ${error.message}`));
+    }
+  });
+
 // 如果没有提供命令，显示帮助
 if (!process.argv.slice(2).length) {
   program.outputHelp();
   console.log('\n📝 使用示例:');
   console.log('  kg-cli setup python_docs --config config.json');
+  console.log(
+    '  kg-cli setup python_docs --config config.json --target-dir ./docs',
+  );
+  console.log('  kg-cli link python_docs');
+  console.log('  kg-cli link python_docs --target-dir ./docs');
   console.log('  kg-cli update python_docs');
   console.log('  kg-cli list');
   console.log('  kg-cli remove python_docs');
