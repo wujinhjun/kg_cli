@@ -1,0 +1,37 @@
+{
+  "python_docs": {
+    "local_paths": [
+      "/usr/local/share/python-docs",
+      "C:\\Program Files\\Python\\Doc",
+      "/opt/python-docs",
+      "~/python-docs"
+    ],
+    "repo_url": "https://github.com/python/cpython.git"
+  },
+  "nodejs_docs": {
+    "local_paths": [
+      "/usr/local/share/nodejs-docs",
+      "C:\\Program Files\\nodejs\\docs",
+      "/opt/nodejs-docs",
+      "~/nodejs-docs"
+    ],
+    "repo_url": "https://github.com/nodejs/node.git"
+  },
+  "git_docs": {
+    "local_paths": [
+      "/usr/local/share/git-docs",
+      "C:\\Program Files\\Git\\doc",
+      "/opt/git-docs",
+      "~/git-docs"
+    ],
+    "repo_url": "https://github.com/git/git.git"
+  },
+  "linux_docs": {
+    "local_paths": [
+      "/usr/local/share/linux-docs",
+      "/opt/linux-docs",
+      "~/linux-docs"
+    ],
+    "repo_url": "https://github.com/torvalds/linux.git"
+  }
+}

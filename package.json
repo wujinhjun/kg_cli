@@ -1,0 +1,65 @@
+{
+  "name": "kg-cli",
+  "version": "1.0.0",
+  "description": "知识库命令行工具 - 支持检测Git知识库、克隆和创建软链接",
+  "main": "lib/cli.js",
+  "bin": {
+    "kg-cli": "./bin/kg-cli.js"
+  },
+  "scripts": {
+    "start": "node bin/kg-cli.js",
+    "dev": "nodemon bin/kg-cli.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "echo \"No build step required\"",
+    "prepublishOnly": "pnpm test",
+    "prepack": "pnpm run build",
+    "postpack": "echo \"Package created successfully\"",
+    "publish": "pnpm publish",
+    "publish:patch": "pnpm version patch && pnpm publish",
+    "publish:minor": "pnpm version minor && pnpm publish",
+    "publish:major": "pnpm version major && pnpm publish",
+    "pack": "pnpm pack",
+    "install:global": "pnpm install -g .",
+    "uninstall:global": "pnpm uninstall -g kg-cli",
+    "link": "pnpm link --global",
+    "unlink": "pnpm unlink --global"
+  },
+  "keywords": [
+    "knowledge-base",
+    "git",
+    "cli",
+    "symlink",
+    "repository",
+    "command-line"
+  ],
+  "author": "KG-CLI Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/kg-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/kg-cli/issues"
+  },
+  "homepage": "https://github.com/your-username/kg-cli#readme",
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "dependencies": {
+    "commander": "^9.4.1",
+    "fs-extra": "^11.1.0",
+    "chalk": "^4.1.2",
+    "inquirer": "^8.2.4",
+    "simple-git": "^3.16.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  },
+  "preferGlobal": true,
+  "files": [
+    "bin/",
+    "lib/",
+    "config.json",
+    "README.md"
+  ]
+}
